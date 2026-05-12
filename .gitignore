@@ -1,0 +1,24 @@
+/node_modules
+/vendor
+.env
+# package-lock.json
+/storage/installed
+/public/hot 
+
+/public/storage
+/package-lock.json
+package-lock.json
+/public/mix-manifest.json
+/public/css/
+/public/storage/
+/storage/media-library/temp
+/storage/app/public
+/storage/keys/
+/mysql_data
+/public/css/app.css
+public/mix-manifest.json
+
+/public/js
+/public/node_modules_*
+/public/resources_js_*
+/public/bundle-report.htmlpublic/file/service-account-file.json

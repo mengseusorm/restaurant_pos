@@ -1,0 +1,148 @@
+import axios from 'axios'
+import appService from "../../services/appService";
+
+export const reservation = {
+    namespaced: true,
+    state: {
+        lists: [],
+        page: {},
+        pagination: {},
+        show: {},
+        temp: {
+            temp_id: null,
+            isEditing: false,
+        },
+    },
+    getters: {
+        lists: function (state) {
+            return state.lists;
+        },
+        pagination: function (state) {
+            return state.pagination
+        },
+        page: function(state) {
+            return state.page;
+        },
+        show: function (state) {
+            return state.show;
+        },
+        temp: function (state) {
+            return state.temp;
+        }
+    },
+    actions: {
+        lists: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                let url = 'admin/reservation';
+                if (payload) {
+                    url = url + appService.requestHandler(payload);
+                }
+                axios.get(url).then((res) => {
+                    if(typeof payload.vuex === "undefined" || payload.vuex === true) {
+                        context.commit('lists', res.data.data);
+                        context.commit('page', res.data.meta);
+                        context.commit('pagination', res.data);
+                    }
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        save: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                let method = axios.post;
+                let url = '/admin/reservation';
+                if (this.state['reservation'].temp.isEditing) {
+                    method = axios.post;
+                    url = `/admin/reservation/${this.state['reservation'].temp.temp_id}`;
+                }
+                method(url, payload.form).then(res => {
+                    context.dispatch('lists', payload.search).then().catch();
+                    context.commit('reset');
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        edit: function (context, payload) {
+            context.commit('temp', payload);
+        },
+        destroy: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.delete(`admin/reservation/${payload.id}`).then((res) => {
+                    context.dispatch('lists', payload.search).then().catch();
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        show: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.get(`admin/reservation/show/${payload}`).then((res) => {
+                    context.commit('show', res.data.data);
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        checkIn: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(`admin/reservation/${payload.id}/check-in`).then((res) => {
+                    context.dispatch('lists', payload.search).then().catch();
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        checkOut: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(`admin/reservation/${payload.id}/check-out`).then((res) => {
+                    context.dispatch('lists', payload.search).then().catch();
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        cancel: function (context, payload) {
+            return new Promise((resolve, reject) => {
+                axios.post(`admin/reservation/${payload.id}/cancel`, payload.form).then((res) => {
+                    context.dispatch('lists', payload.search).then().catch();
+                    resolve(res);
+                }).catch((err) => {
+                    reject(err);
+                });
+            });
+        },
+        reset: function (context) {
+            context.commit('reset');
+        }
+    },
+    mutations: {
+        lists: function (state, payload) {
+            state.lists = payload
+        },
+        pagination: function (state, payload) {
+            state.pagination = payload;
+        },
+        page: function (state, payload) {
+            state.page = payload;
+        },
+        show: function (state, payload) {
+            state.show = payload;
+        },
+        temp: function (state, payload) {
+            state.temp.temp_id = payload;
+            state.temp.isEditing = true;
+        },
+        reset: function (state) {
+            state.temp.temp_id = null;
+            state.temp.isEditing = false;
+        }
+    }
+}

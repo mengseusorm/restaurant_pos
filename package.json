@@ -1,0 +1,86 @@
+{
+    "name": "chilly-pos",
+    "version": "1.0.0",
+    "description": "Restaurant Point of Sale System",
+    "author": "Your Name <your@email.com>",
+    "private": true,
+    "main": "electron/main.js",
+    "build": {
+        "appId": "com.kbt.chillypos",
+        "productName": "Restaurant POS",
+        "win": {
+            "icon": "build/icons/icon.png",
+            "target": "nsis",
+            "signAndEditExecutable": false,
+            "verifyUpdateCodeSignature": false
+        },
+        "mac": {
+            "icon": "build/icons/icon.icns"
+        },
+        "linux": {
+            "icon": "build/icons/icon.png"
+        }
+    },
+    "scripts": {
+        "dev": "npm run development",
+        "development": "mix",
+        "watch": "mix watch",
+        "watch-poll": "mix watch -- --watch-options-poll=1000",
+        "hot": "mix watch --hot",
+        "prod": "npm run production",
+        "production": "mix --production",
+        "electron": "electron .",
+        "electron:dev": "cross-env NODE_ENV=development electron .",
+        "electron:build": "electron-builder --win --x64",
+        "electron:build:mac": "electron-builder --mac",
+        "electron:build:linux": "electron-builder --linux",
+        "electron:build:clean": "rimraf dist && electron-builder --win --x64"
+    },
+    "devDependencies": {
+        "@popperjs/core": "^2.10.2",
+        "autoprefixer": "^10.4.16",
+        "axios": "^1.1.2",
+        "bootstrap": "^5.2.1",
+        "case-sensitive-paths-webpack-plugin": "^2.4.0",
+        "cross-env": "^7.0.3",
+        "electron": "^29.4.6",
+        "electron-builder": "^24.13.3",
+        "laravel-mix": "^6.0.15",
+        "lodash": "^4.17.19",
+        "postcss": "^8.4.32",
+        "rimraf": "^5.0.5",
+        "sass": "^1.32.11",
+        "tailwindcss": "^3.3.6",
+        "vite": "^3.0.0",
+        "vue": "^3.2.37",
+        "vue-loader": "^17.0.0",
+        "webpack-bundle-analyzer": "^4.10.2"
+    },
+    "dependencies": {
+        "@vuepic/vue-datepicker": "^3.6.3",
+        "@vueuse/core": "^13.0.0",
+        "babel-loader": "^9.1.0",
+        "chart.js": "^4.5.0",
+        "firebase": "^9.18.0",
+        "google-maps": "^4.3.3",
+        "html2canvas": "^1.4.1",
+        "html5-qrcode": "^2.3.8",
+        "laravel-vue-pagination": "^4.0.0",
+        "qrcode": "^1.5.4",
+        "qz-tray": "^2.2.4",
+        "swiper": "^11.0.5",
+        "vue-draggable-next": "^2.2.1",
+        "vue-element-loading": "^3.0.1",
+        "vue-i18n": "^9.2.2",
+        "vue-material-design-icons": "^5.3.1",
+        "vue-next-select": "^2.10.5",
+        "vue-router": "^4.1.6",
+        "vue-toastification": "^2.0.0-rc.5",
+        "vue3-carousel": "^0.2.9",
+        "vue3-print-nb": "^0.1.4",
+        "vue3-quill": "^0.3.0",
+        "vue3-simple-alert": "^1.0.4",
+        "vuex": "^4.1.0",
+        "vuex-persistedstate": "^4.1.0"
+    }
+}

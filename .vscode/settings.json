@@ -1,0 +1,8 @@
+{
+    "files.autoSave": "afterDelay",
+    "i18n-ally.localesPaths": [
+        "lang",
+        "resources/js/languages",
+        "public/images/language"
+    ]
+}

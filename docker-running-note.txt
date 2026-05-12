@@ -1,0 +1,193 @@
+docker-compose build
+docker-compose up -d
+
+# down without remove volumn
+docker-compose down
+
+# down and remove volumn
+docker-compose down -v
+
+# down and not remove volumn
+docker-compose down
+
+docker-compose build
+
+docker-compose up -d
+
+docker exec chilly_pos_mysql \
+  mysqldump -u root -pchilly_pos_root_2025 chilly_pos > backup.sql
+
+
+docker cp backup.sql chilly_pos_mysql:/backup.sql
+
+docker exec -it chilly_pos_mysql bash
+
+/usr/local/bin/docker exec -it c5a9682dd0e9e44c5048f2143f6277bf3c97cdc22574af18847dfdf163a9fd8c bash
+
+/usr/local/bin/docker exec -it 64cfd755cd5b15717ba9a307e125776e50841d8b525984af7389d666439dd1ab bash
+
+## Reload docker
+
+docker compose down chilly_pos_app && docker compose up -d chilly_pos_app 2>&1
+
+sleep 4 && docker exec restaurant_pos-chilly_pos_app-1 php /var/www/html/artisan config:clear 2>&1
+
+
+# Laravel Migration Commands (run inside the container):
+# Create new migrations for the order rejection functionality:
+php artisan make:migration add_rejection_fields_to_orders_table
+php artisan make:migration add_refund_fields_to_payment_orders_table  
+php artisan make:migration add_reference_fields_to_transactions_table
+
+# Run migrations:
+php artisan migrate
+
+# Check migration status:
+php artisan migrate:status
+
+# Rollback last migration (if needed):
+php artisan migrate:rollback
+
+# Fresh migration (reset and re-run all):
+php artisan migrate:fresh
+
+# Seed database after migration:
+php artisan db:seed
+
+# Clear Laravel caches after migration:
+php artisan config:clear
+php artisan cache:clear
+php artisan route:clear
+php artisan view:clear
+
+# Generate application key (if needed):
+php artisan key:generate
+
+# Then inside the container
+mysql -u root -pchilly_pos_root_2025 chilly_pos < /backup.sql
+
+After delete data in menu and permission table:
+ALTER TABLE menus AUTO_INCREMENT = 1;
+ALTER TABLE permissions AUTO_INCREMENT = 1;
+
+
+# Optional: Test the cleanup command
+php artisan payment:cleanup-callback-history --days=30
+
+
+====================================================================================
+
+Run Cron in production
+
+Option 2: Cron Job (Alternative)
+# Run every 10 seconds for specific branch
+*/10 * * * * cd /path/to/your/project && php artisan huione:check-payment-status --branch=1
+
+# Or use a shell script that loops every 10 seconds
+
+
+Option 3: Supervisor Process (For Production)
+Create /etc/supervisor/conf.d/huione-payment-checker.conf:
+
+[program:huione-payment-checker-branch-1]
+command=php artisan huione:check-payment-status --branch=1
+directory=/path/to/your/project
+autostart=true
+autorestart=true
+user=www-data
+numprocs=1
+redirect_stderr=true
+stdout_logfile=/var/log/supervisor/huione-payment-checker-branch-1.log
+
+
+#Make it executable:
+chmod +x /var/www/restaurant_pos_v5/check-payment.sh
+
+Add to crontab (crontab -e):
+* * * * * /var/www/restaurant_pos_v4/check-payment.sh
+
+
+
+
+#Copy Item Sql:
+
+INSERT INTO items (
+    item_category_id,
+    tax_id,
+    name,
+    slug,
+    caution,
+    description,
+    price,
+    price_with_tax,
+    status,
+    item_type,
+    tax_name,
+    tax_rate,
+    tax_type,
+    tax_amount,
+    `order`,
+    is_featured,
+    creator_type,
+    creator_id,
+    editor_type,
+    editor_id,
+    kitchen_printer_id,
+    label_printer_id,
+    barcode,
+    manage_stock,
+    is_print_menu,
+    is_print_label,
+    branch_id,
+    created_at,
+    updated_at
+)
+SELECT
+    1 AS item_category_id,   -- set new category
+    tax_id,
+    name,
+    CONCAT(slug, '-copy-', UNIX_TIMESTAMP()) AS slug, -- prevent duplicate slug
+    caution,
+    description,
+    price,
+    price_with_tax,
+    status,
+    item_type,
+    tax_name,
+    tax_rate,
+    tax_type,
+    tax_amount,
+    `order`,
+    is_featured,
+    creator_type,
+    creator_id,
+    editor_type,
+    editor_id,
+    kitchen_printer_id,
+    label_printer_id,
+    barcode,
+    manage_stock,
+    is_print_menu,
+    is_print_label,
+    1 AS branch_id,          -- set new branch
+    NOW(),
+    NOW()
+FROM items
+WHERE name LIKE 'S%'
+  AND branch_id = 2;
+
+
+
+
+# This will be blocked in production:
+php artisan telegram:test --chat-id="708383989"
+
+# Only this will work in production:
+php artisan telegram:test --chat-id="708383989" --force
+
+# Clear Menu:
+delete from menus where 1=1;
+ALTER TABLE menus AUTO_INCREMENT = 1;
+
+delete from permissions where 1=1;
+ALTER TABLE permissions AUTO_INCREMENT = 1;

@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  chilly_pos_app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    ports:
+      - "8000:80"
+    volumes:
+      - ./:/var/www/html         # ✅ Sync code with container
+    depends_on:
+      - chilly_pos_mysql
+    environment:
+      - APACHE_DOCUMENT_ROOT=/var/www/html/public
+
+  chilly_pos_mysql:
+    image: mysql:8.0
+    ports:
+      - "3399:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: chilly_pos_root_2025
+      MYSQL_DATABASE: chilly_pos
+      MYSQL_USER: chilly_pos_user
+      MYSQL_PASSWORD: chilly_pos_user_password
+    volumes:
+      - './mysql_data/data:/var/lib/mysql'
+      - './mysql_data/db_src:/home'

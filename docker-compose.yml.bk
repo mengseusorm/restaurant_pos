@@ -1,0 +1,75 @@
+version: '3.8'
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  web-app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+      target: ${BUILD_TARGET:-development}  # Use "production" for production
+    container_name: ${APP_NAME:-laravel-react}-backend
+    volumes:
+      - .:/app
+      - storage-data:/app/storage
+      - /app/bootstrap/cache  # Exclude cache from being overwritten
+    ports:
+      - "${BACKEND_PORT:-9000}:9000"
+    env_file:
+      - .env
+    networks:
+      - app_network
+    depends_on:
+      - database
+
+  database:
+    image: mysql:5.7
+    container_name: ${APP_NAME:-laravel-react}-database
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-12345}
+      MYSQL_DATABASE: ${DB_DATABASE:-lara_db}
+    ports:
+      - "3306:3306"
+    networks:
+      - app_network
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h localhost -p${DB_PASSWORD:-12345} || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  nginx:
+    image: nginx:alpine
+    container_name: ${APP_NAME:-laravel-react}-nginx
+    volumes:
+      - ./docker/nginx.conf:/etc/nginx/nginx.conf
+      - ./public:/app/public
+    ports:
+      - "${NGINX_PORT:-8000}:8000"
+    networks:
+      - app_network
+    depends_on:
+      - web-app
+      - database
+
+  node:
+    image: node:18
+    container_name: ${APP_NAME:-laravel-react}-node
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "3000:3000"  # For React HMR
+    command: sh -c "npm install && npm run dev"
+    networks:
+      - app_network
+    depends_on:
+      - web-app
+
+volumes:
+  mysql-data:
+  storage-data:
