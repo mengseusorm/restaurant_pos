@@ -95,6 +95,9 @@
         "allow-plugins": {
             "pestphp/pest-plugin": true,
             "php-http/discovery": false
+        },
+        "platform": {
+            "php": "8.5.4"
         }
     },
     "minimum-stability": "dev",
